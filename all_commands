@@ -1,0 +1,462 @@
+5b
+maven archetype quickstart v-1.4
+run as
+clean
+install
+test 
+build (clean install test)
+java app
+-------------------------------------------------------------------------------
+5c
+maven archetype webapp
+add mvn dependencies
+run as
+clean
+install
+test
+build (clean install test)
+run on server
+-----------------------------------------------------------------------------------
+
+6a
+build
+	git url
+	*/main
+	add buid steps
+		invoke top level mvn
+			clean 
+			install
+	post build actions
+		archive atifacts **/*
+		build other proj (test)
+test
+	delete workspace before build starts
+	add build steps
+		copy artifacts from build
+		invoke to level maven test
+	post build actions
+		archive the artifacts
+
+pipeline 
+	upstream build
+-----------------------------------------------------------------------------
+6b
+build
+	git url
+	poll scm
+	build action
+		invoke top level mvn
+			clean
+			install
+	post build
+		archive artifacts
+		build other proj test
+ test
+	delete the workspace
+	build action
+		copy artifacts
+		invoke top level maven test
+	post build
+		archive the artifacts
+		build other projs deploy
+deploy
+	delete the workspace
+	buld actions
+		copy artifacts
+	post build
+		deploy war
+			add tomcat
+pipe 
+	upstream build
+
+---------------------------------------------------------------------------------------
+ 7a
+docker pull image-name
+docker run --name new -d imgname
+docker ps -a
+docker rm contId
+docker rmi imagename
+docker exec -it newimgname imgcomp
+
+
+docker build -t urimgname  .
+docker images
+docker commit hashId dockId/imgname
+docker push dockId/imgname
+
+-------------------------------------------------------------------------------------
+docker-compose up
+docker-compose stop
+------------------------------------------------------------------------------------
+minikube start
+kubectl create deployment name --image=nginx
+kubectl get deployments
+kubectl expose deployment --type=NodePort --port=80         --target-port=80
+
+kubectl scale deployment mynginx --replicas=4
+
+kuectl port-forward svc/mynginx 8081:80
+-------------------------------------------------------------------------------
+docker run --name nagi3 -p 8088:80 jasonrivers/nagios:latest
+
+
+keerthi's
+
+Docker CLI Commands
+-------------------------------------------------------------------------------------------------------------------------------
+
+docker --version : if docker is installed correctly
+
+docker pull hello-world : test if docker is working properly
+docker images : to check if the image has been pulled (hello-world)
+docker run hello-world : runs the image as a container to check if the docker is working properly
+
+check for the list of all containers:
+------------------------------------
+docker ps -a
+check for running containers:
+-----------------------------
+docker ps
+
+
+delete the container:
+---------------------
+docker rm <container_id>
+
+delete image:
+-------------
+docker rmi <image-name>
+
+---------------------------------------------------------------------------------------------------------------------------
+
+REDIS Image - it is a database for temporary purpose like storing graphs, charts, etc
+
+
+docker pull redis
+
+docker run --name newRedis -d redis 
+(--name to give a new name to the container or else docker will give a random name)
+(-d for telling it to run the application in the backend like installations and all so your task is not disturbed)
+docker ps
+
+enter into the container:
+------------------------
+
+docker exec -it newRedis redis-cli
+(exec - execute the container)
+(-it - in interactive mode)
+(newRedis - container name)
+(redis-cli - the interactive cli present in redis)
+
+REDIS commands: 
+---------------
+
+SET name "Abcd"
+GET name
+exit 
+
+Stop the container:
+-------------------
+
+docker stop <id>
+
+remove the image and container:
+-------------------------------
+
+docker rm <id>
+docker rmi <image_name>
+
+------------------------------------------------------------------------------------------------------------------------------------------
+
+build a docker image using Dockerfile in the current folder: (redis)
+
+
+1) create a docker file :
+   --------------------
+
+FROM redis:latest
+CMD ["redis-server"]
+
+2) build:
+   -----
+docker build -t tempredis .
+(-t - tag to give new name to image)
+(. - to tell to run in the current folder itself)
+
+3) run:
+   ---
+docker run --name <newname> -d tempredis
+
+4) now stop the container and push the image onto the local repo:
+   --------------------------------------------------------------
+
+docker stop <id>
+docker commit <id> keerthi2103/<name>
+docker login
+docker push keerthi2103/<name>
+
+5) now delete all the containers and images
+
+6) pull the docker image:
+   ---------------------
+docker pull keerthi2103/<name>
+
+7) run the image as container:
+   --------------------------
+docker run --name <your_name> -d keerthi2103/<name>
+
+8) enter into the cli of redis:
+   ---------------------------
+docker exec -it <your_name> redis-cli
+
+9) come out and delete all the containers and images
+
+10) logout of docker
+
+
+------------------------------------------------------------------------------------------------------------------------------------------
+
+modify and push a docker image : (ubuntu)
+
+1) docker pull ubuntu
+
+2) docker run -it --name newUbuntu -d ubuntu
+
+3) docker ps
+
+4) docker exec -it newUbuntu bash
+
+<enter the bash>:
+----------------
+
+a) git --version
+b) apt update
+c) apt install git -y
+d) git --version
+e) exit
+<come out>
+----------------
+
+5) docker stop newUbuntu
+
+6) docker commit newUbuntu keerthi2103/<name>
+
+7) docker login
+
+8) docker push keerthi2103/<name>
+
+9) delete all containers and images (rm,rmi)
+
+10) docker pull keerthi2103/<name>
+
+11) docker run --name <your_name> -it keerthi2103/<name>
+
+12) if bash is not seen : docker exec -it <your_name> bash
+    -------------------
+
+13) git --version
+
+14) exit
+
+15) remove images and containers
+
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+write an application > create an image > push it on hub
+
+1) login to docker hub and docker local
+
+2) create a folder inside a folder
+
+3) have the innermost folder with the proj name
+
+4) create a .js file and a Dockerfile in this proj folder
+
+Dockerfile :
+------------
+FROM node:16-alpine
+WORKDIR /app
+COPY calculator.js /app
+CMD ["node","calculator.js"]
+
+
+5) go to the powershell in this directory and do :
+
+docker build -t <name> .
+
+docker run <name>
+
+<stop the image if not stopped>
+
+docker tag <name> keerthi2103/<new_name>
+
+docker login
+
+docker push keerthi2103/<new_name>
+
+<delete all images and containers>
+
+docker pull keerth2103/<new_name>
+
+docker run keerthi2103/<new_name>
+
+<delete all>
+
+docker logout
+
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+multiple images with docker compose :
+
+1) create a folder 
+
+2) inside the folder write the docker-compose.yaml (has details like - what containers have to be created, how to start them, 
+                                                       what all should the containers contain)
+3) docker-compose.yaml:
+   --------------------
+
+version: "3.8"
+services:
+  tomcat:
+    image: tomee
+    container_name: tomcat_server
+    ports:
+      - "8087:8080"
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx_server
+    ports:
+      - "85:80"
+
+  wordpress:
+    image: wordpress:latest
+    container_name: wp_server
+    ports:
+      - "8000:80"
+
+  mysql:
+    image: mysql:5.7
+    container_name: sql_server
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: example_password
+
+
+4) go to powershell in the folder
+
+5) start the container : 
+   ---------------------
+docker-compose up -d
+(-d  : detachable running in backend)
+
+6) you can access in web browser
+
+7) check all the running containers:
+   ---------------------------------
+docker ps
+  
+8) stop the containers 
+   -------------------
+docker-compose stop
+
+9) start again : (no need of docker-compose up directly start)
+   ------------
+docker-compose start
+
+10) delete everything :
+    -------------------
+docker-compose stop
+docker-compose down 
+
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+Deploying application using kubernetes (docker - package and run the container)
+(keubernetes - organizes the containers into groups and distributes them on different systems called nodes (these group of machines are clusters) this will help in sharing the application when one is down)
+
+1) create a local kubernetes cluster : (windows - uses hyperV / macOS or Linux - uses Docker to run)
+   -----------------------------------
+minikube start
+(NOTE : if minikube does not start first do minikube delete then run the command)
+                                            ---------------
+
+2) create an application:
+   ----------------------
+kubectl create deployment mynginx --image=nginx
+
+3) to ckeck if the application is ready :
+   -------------------------------------
+kubectl get deployments 
+
+4) make the application be available outside the kubernetes environment:
+   ---------------------------------------------------------------------
+kubectl expose deployment mynginx --type=NodePort --port=80 --target-port=80
+
+(kubectl expose - creating a service to host the application)
+(deployment mynginx - which deployment i want to host)
+(--type=NodePort - will make the service accessible outside the cluster)
+(--port=80 - port where you can access)
+(--target-port=80 - inside kubernetes we have pods inside pods we have nginx container running on port = 80)
+
+5) scale the application by creting more copies to handle traffic:
+   ---------------------------------------------------------------
+kubectl scale depolymnet mynginx --replicas=4
+
+(even if one of the application/pod is failed the other will run)
+
+6) see the deploymnets:
+   --------------------
+kubectl get pods
+kubectl get deployments
+
+7) port forwarding: (because jenkins is using 8080)
+   ------------------------------------------------
+kubectl port-forward svc/mynginx 8081:80
+
+(svc/mynginx - the service created)
+(use 81 when accessing 80 for this service - the traffic on 8081 will be sent to port 80 inside nginx pod)
+
+8) go to the port in webbrowser
+  -------------------------------
+
+9) get the kubernetes dashboard:
+   -----------------------------
+minikube dahsboard
+
+10) delete evrything :
+    -----------------
+kubectl delete deployment mynginx
+kubectl delete service mynginx
+minikube stop
+
+----------------------------------------------------------------------------------------------------------------------------------------
+
+Monitoring using nagios(tool used to monitor systems, networks or software)
+
+1) open docker desktop and sign in
+
+2) pull the nagios image:
+   ---------------------
+docker pull jasonrivers/nagios:latest
+
+3) run the nagios :
+   ---------------
+docker run --name MyNagios -p 8888:80 jasonrivers/nagios:latest
+
+4) open the port and sign in :
+   --------------------------
+username : nagiosadmin
+password : nagios
+
+5) stop the container : (in a different powershell)
+   --------------------
+docker stop MyNagios 
+docker rm MyNagios
+docker images
+docker rmi <img_name>
+
+Running python
+docker run -it --name MyPy -d python
+this to execute:
+docker exec -it MyPy python3
